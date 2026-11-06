@@ -1,0 +1,35 @@
+=== while loop ===
+  immediate correct              locked=False attempts=1 correct=True   inputs=['1234']
+  two blanks then correct        locked=False attempts=1 correct=True   inputs=['', '', '1234']
+  three wrong -> lock            locked=False attempts=3 correct=False  inputs=['0000', '1111', '2222']
+  blank then wrong, blank, wrong -> lock locked=False attempts=2 correct=False  inputs=['', '1111', '', '2222']
+  wrong, blank, wrong -> lock    locked=False attempts=2 correct=False  inputs=['1111', '', '2222']
+  wrong, two blanks, correct     locked=False attempts=2 correct=True   inputs=['0000', '', '', '1234']
+
+=== for loop ===
+  immediate correct              locked=False attempts=1 correct=True   inputs=['1234']
+  two blanks then correct        locked=False attempts=1 correct=True   inputs=['', '', '1234']
+  three wrong -> lock            locked=True  attempts=3 correct=False  inputs=['0000', '1111', '2222']
+  blank then wrong, blank, wrong -> lock locked=True  attempts=1 correct=False  inputs=['', '1111', '', '2222']
+  wrong, blank, wrong -> lock    locked=True  attempts=2 correct=False  inputs=['1111', '', '2222']
+  wrong, two blanks, correct     locked=True  attempts=1 correct=False  inputs=['0000', '', '', '1234']
+
+--- Design notes ---
+while is more natural when the number of attempts is NOT fixed in advance, e.g.,
+if the bank allows 2 extra attempts after a security question, the upper bound
+becomes dynamic. A for loop needs the count up front; a while condition can
+change during execution.
+
+Bug if counter updated in wrong place (before blank-check):
+  attempts = 0
+  while attempts < MAX_ATTEMPTS:
+      entry = input()
+      attempts += 1   # BUG: blank entry still increments counter
+      if entry == '': continue
+This wastes attempts on blank lines.
+
+--- Changed Condition: security question grants 2 extra attempts ---
+    [security question passed -> max_attempts now 5]
+  Test: locked=True attempts=5 correct=False
+  while loop naturally supports dynamic max_attempts; for loop would need
+  a second loop or a break/continue pattern to re-enter.

@@ -1,0 +1,31 @@
+Household  units | ration | older | decide_separate           decide_elif
+------------------------------------------------------------------------------
+1   | 100  | True  | False | [full(100)]          [full]
+2   | 101  | True  | False | [partial(101)]          [partial]
+3   | 200  | True  | False | [partial(200)]          [partial]
+4   | 201  | True  | False | []          [none]
+5   | 201  | True  | True | [none(201)]          [none]
+6   | 150  | False | False | []          [none]
+7   | 50  | False | False | [full(50)]          [full]
+8   | 150  | True  | True | [partial(150)]          [partial]
+
+Observation: for all eight households the two designs return the same single
+outcome. The if–elif–else form guarantees exactly one result even when future
+requirements cause two branches to overlap, whereas each separate if would start
+adding outcomes independently (producing duplicates / multiple subsidies).
+houses_100TrueFalse: boolean=none
+houses_101TrueFalse: boolean=partial
+houses_200TrueFalse: boolean=partial
+houses_201TrueFalse: boolean=none
+houses_201TrueTrue: boolean=none
+houses_150FalseFalse: boolean=none
+houses_50FalseFalse: boolean=none
+houses_150TrueTrue: boolean=partial
+
+Preliminary: branch orderisation cost is negligible for few slabs, but matters when
+requirements grow into many tiers. match–case would scale linearly with k:
+  per-decision O(k) (each case checked until a guard matches).
+
+Decision kept: combine the band condition with a Boolean `and`; nest an if only
+when a sub-policy inside a tier is itself conditional. This stays readable and easy to
+extend, and the elif chain remains the single-decision backbone.

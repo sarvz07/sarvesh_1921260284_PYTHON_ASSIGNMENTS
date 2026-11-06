@@ -1,0 +1,54 @@
+CO2 - Q7: DIAGNOSE, REDESIGN AND VALIDATE
+Selected program: Q6 - Counting ways to climb temple steps
+
+A. DIAGNOSE THE BOTTLENECK
+The original recursive function calls itself twice for most values of n.
+It recalculates the same smaller stair counts many times.
+The number of function calls grows exponentially as n increases.
+
+B. DESIGN OBJECTIVE
+Calculate the same answer in O(n) time and O(1) extra space.
+
+C. REVISED DESIGN
+Keep only the previous two answers and calculate the next answer in a loop.
+This avoids repeated recursive calls and does not need a cache.
+Trade-off: the iterative version is less direct than the recursive definition.
+
+Pseudocode:
+1. Set previous = 1 and current = 1.
+2. Repeat from step 2 to n.
+3. Calculate next = previous + current.
+4. Move current into previous and next into current.
+5. Return current.
+
+D. PREDICTION
+The iterative version should use n-1 loop iterations and O(1) extra space.
+It should be much faster than plain recursion for larger n.
+
+E. IMPLEMENTATION AND VALIDATION
+Both versions are tested with the same inputs.
+Times are measured on the computer running this program.
+
+    n          Answer     Naive calls   Naive time (s)   Loop iterations   Loop time (s)
+   10              89             177       0.00001116                 9      0.00000201
+   20           10946           21891       0.00136181                19      0.00000238
+   25          121393          242785       0.01613542                24      0.00000356
+   30         1346269         2692537       0.17299852                29      0.00000606
+
+Validation: Both methods produced identical answers for every test input.
+
+Large input test:
+n = 1000
+Answer calculated successfully.
+Number of loop iterations: 999
+Number of digits in answer: 209
+
+F. FINAL EVALUATION
+The redesign meets the objective: it calculates the same result using O(n) time
+and O(1) extra space, without recursive calls or a cache.
+Plain recursion is useful for demonstrating the mathematical definition and
+small inputs, but the iterative version is more suitable for large staircases.
+
+Complexity comparison:
+Plain recursion: O(2^n) time and O(n) call-stack space.
+Iterative redesign: O(n) time and O(1) extra space.
